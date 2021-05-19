@@ -2,6 +2,7 @@
   <div>
     <b-container>
       <b-breadcrumb :items="bc_items"></b-breadcrumb>
+      <hr />
       <b-button variant="outline-primary" @click="goCreatePermission"
         >Crear Permiso</b-button
       >

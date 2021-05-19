@@ -1,6 +1,8 @@
 <template>
   <div>
     <b-container>
+      <b-breadcrumb :items="bc_items"></b-breadcrumb>
+      <hr />
       <b-button variant="outline-primary" @click="goBack"
         >Volver atras</b-button
       >
@@ -86,7 +88,17 @@ export default {
         employeeLastName: "",
         permissionType: null,
         permissionDate: null
-      }
+      },
+      bc_items: [
+        {
+          text: "Home",
+          href: "#"
+        },
+        {
+          text: "Crear Permiso",
+          active: true
+        }
+      ]
     };
   },
 
