@@ -14,6 +14,22 @@ namespace api.Controllers
             _context = context;
         }
 
+        [HttpGet("{Id}")]
+        [ApiVersion("1.0")]
+        public async Task<IActionResult> get(int Id)
+        {
+            try
+            {
+                var lista = await _context.Permissions.Include(x => x.Type).FirstOrDefaultAsync(x => x.Id == Id);
+
+                return Ok(lista);
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet]
         [ApiVersion("1.0")]
         public async Task<IActionResult> getAll()
@@ -73,7 +89,6 @@ namespace api.Controllers
                 permiso.PermissionType = model.PermissionType;
                 permiso.PermissionDate = model.PermissionDate;
 
-                _context.Permissions.Add(permiso);
                 await _context.SaveChangesAsync();
                 return Ok(permiso);
             }
