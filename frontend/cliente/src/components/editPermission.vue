@@ -69,7 +69,11 @@
 </template>
 
 <script>
-import axios from "axios";
+import { ProvidersPermissionTypeGetAll } from "../providers/permissionType_providers.js";
+import {
+  ProvidersPermissionGet,
+  ProvidersPermissionUpdate
+} from "../providers/permission_providers.js";
 export default {
   data() {
     return {
@@ -84,52 +88,30 @@ export default {
       this.$router.back();
     },
     async getPermissionTypes() {
-      try {
-        const response = await axios.get(
-          `https://localhost:5001/api/v1/PermissionType`
-        );
-        if (response.status == 200) {
-          response.data.forEach(e => {
-            this.permissionTypes.push({ value: e.id, text: e.description });
-          });
-        }
-
-        // this.permissionTypes = response.data;
-      } catch (e) {
-        console.log(e);
+      const rst = await ProvidersPermissionTypeGetAll();
+      if (rst.isSuccess) {
+        rst.result.forEach(e => {
+          this.permissionTypes.push({ value: e.id, text: e.description });
+        });
+      } else {
       }
     },
 
     async getPermission(id) {
-      try {
-        const response = await axios.get(
-          `https://localhost:5001/api/v1/Permission/${id}`
-        );
-        if (response.status == 200) {
-          this.permission = response.data;
-          console.log(this.permission);
-        }
-      } catch (e) {
-        console.log(e);
+      const rst = await ProvidersPermissionGet(id);
+      if (rst.isSuccess) {
+        this.permission = rst.result;
+      } else {
+        console.log(rst.message);
       }
     },
 
     async savePermission() {
-      try {
-        const response = await axios.put(
-          `https://localhost:5001/api/v1/Permission`,
-          this.permission
-        );
-        if (
-          response.status == 200 ||
-          response.status == 201 ||
-          response.status == 204
-        ) {
-          this.goBack();
-        } else {
-        }
-      } catch (e) {
-        console.log({ ...e });
+      const rst = await ProvidersPermissionUpdate(this.permission);
+      if (rst.isSuccess) {
+        this.goBack();
+      } else {
+        console.log(rst.message);
       }
     },
 
@@ -170,7 +152,6 @@ export default {
 
       if (bien) {
         this.savePermission();
-        console.log(this.permission);
       }
     }
   },

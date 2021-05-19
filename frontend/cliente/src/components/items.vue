@@ -29,8 +29,11 @@
 </template>
 
 <script>
-import axios from "axios";
 import Moment from "moment";
+import {
+  ProvidersPermissionGetAll,
+  ProvidersPermissionDelete
+} from "../providers/permission_providers.js";
 
 export default {
   data() {
@@ -85,26 +88,17 @@ export default {
       });
     },
     async deletePermission(id) {
-      try {
-        const response = await axios.delete(
-          `https://localhost:5001/api/v1/Permission/?id=${id}`
-        );
-        if (response.status == 200) {
-          this.getPermission();
-        }
-      } catch (e) {
-        console.log(e);
-        //this.errors.push(e);
+      const rst = await ProvidersPermissionDelete(id);
+      if (rst.isSuccess) {
+        await this.getPermission();
+      } else {
       }
     },
     async getPermission() {
-      try {
-        const response = await axios.get(
-          `https://localhost:5001/api/v1/Permission`
-        );
-        this.items = response.data;
-      } catch (e) {
-        this.errors.push(e);
+      const rst = await ProvidersPermissionGetAll();
+      if (rst.isSuccess) {
+        this.items = rst.result;
+      } else {
       }
     }
   },

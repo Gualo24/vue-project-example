@@ -70,6 +70,12 @@
 
 <script>
 import axios from "axios";
+import { ProvidersPermissionTypeGetAll } from "../providers/permissionType_providers.js";
+import {
+  ProvidersPermissionGet,
+  ProvidersPermissionCreate
+} from "../providers/permission_providers.js";
+
 export default {
   data() {
     return {
@@ -89,38 +95,21 @@ export default {
       this.$router.back();
     },
     async getPermissionTypes() {
-      try {
-        const response = await axios.get(
-          `https://localhost:5001/api/v1/PermissionType`
-        );
-        if (response.status == 200) {
-          response.data.forEach(e => {
-            this.permissionTypes.push({ value: e.id, text: e.description });
-          });
-        }
-
-        // this.permissionTypes = response.data;
-      } catch (e) {
-        console.log(e);
+      const rst = await ProvidersPermissionTypeGetAll();
+      if (rst.isSuccess) {
+        rst.result.forEach(e => {
+          this.permissionTypes.push({ value: e.id, text: e.description });
+        });
+      } else {
       }
     },
 
     async savePermission() {
-      try {
-        const response = await axios.post(
-          `https://localhost:5001/api/v1/Permission`,
-          this.permission
-        );
-        if (
-          response.status == 200 ||
-          response.status == 201 ||
-          response.status == 204
-        ) {
-          this.goBack();
-        } else {
-        }
-      } catch (e) {
-        console.log({ ...e });
+      const rst = await ProvidersPermissionCreate(this.permission);
+      if (rst.isSuccess) {
+        this.goBack();
+      } else {
+        console.log(rst.message);
       }
     },
 
@@ -161,7 +150,6 @@ export default {
 
       if (bien) {
         this.savePermission();
-        console.log(this.permission);
       }
     }
   },
